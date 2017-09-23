@@ -35,6 +35,8 @@
   	$("#destination-input").val("");
   	$("#start-input").val("");
   	$("#frequency-input").val("");
+
+    return false;
   });
 
   database.ref().on("child_added", function(childSnapshot, prevChildKey) {
@@ -47,11 +49,25 @@
 
     console.log(trainName);
     console.log(trainDestination);
-    console.log(firstTrain);
-    console.log(trainFrequency);
+    console.log('firstTrain: ', firstTrain);
+    console.log('trainFrequency: ', trainFrequency);
 
-    $("#train-table").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" +
-    trainFrequency + "</td><td>" + "</td></tr>");
+
+
+      var currentTime = moment();
+      console.log("CURRENT TIME: ", moment(currentTime).format("HH:mm"));
+      var currentTimeConverted = moment(currentTime).format("X");
+      console.log("CURRENT TIME CONVERTED TO UNIX: ", currentTimeConverted);
+      var subtractYear = moment(firstTrain, 'hh:mm').subtract(1, 'years');
+      var timeDiff = currentTime.diff(moment(subtractYear), 'minutes');
+      var remainder = timeDiff % trainFrequency;
+      var minutesUntilTrain = trainFrequency - remainder;
+      var nextTrain = currentTime.add(minutesUntilTrain, 'minutes').format('hh:mm'); 
+      console.log("Next train:", minutesUntilTrain); 
+       
+
+    $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" +
+    trainFrequency + "</td><td>" + nextTrain + "</td><td>" + minutesUntilTrain + "</td></tr>");
 });
 
 
